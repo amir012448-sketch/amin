@@ -104,11 +104,8 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 .btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border-color:var(--line-2)}
 .btn-ghost:hover{background:rgba(255,255,255,.11);transform:translateY(-2px)}
 .btn-danger{background:rgba(224,92,92,.1);color:var(--danger);border-color:rgba(224,92,92,.3)}
-.btn-danger:hover{background:rgba(224,92,92,.2)}
 .btn-ok{background:rgba(74,222,128,.1);color:var(--ok);border-color:rgba(74,222,128,.3)}
-.btn-ok:hover{background:rgba(74,222,128,.2)}
 .btn-warn{background:rgba(255,200,120,.1);color:var(--warn);border-color:rgba(255,200,120,.3)}
-.btn-warn:hover{background:rgba(255,200,120,.2)}
 .btn-sm{padding:7px 12px;font-size:var(--fs-xs)}
 .login-card .btn{width:100%;margin-top:18px}
 .spinner{width:14px;height:14px;border:1.5px solid rgba(0,0,0,.25);border-top-color:var(--bg);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
@@ -151,6 +148,12 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 .photo-card .cover-badge{background:var(--sand);color:var(--bg)}
 .photo-card .remove-photo{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line-2);background:rgba(24,27,31,.85);color:var(--text);cursor:pointer;display:grid;place-items:center;font-size:12px;padding:0;z-index:3}
 .photo-card .remove-photo:hover{background:var(--danger);color:#fff}
+.photo-card .drag-handle{position:absolute;bottom:6px;right:6px;width:22px;height:22px;border-radius:6px;background:rgba(24,27,31,.75);display:grid;place-items:center;color:var(--text-2);pointer-events:none}
+.photo-card .drag-handle svg{width:12px;height:12px}
+.photo-card .photo-move{display:none;position:absolute;bottom:6px;left:6px;right:6px;gap:4px;z-index:3}
+.photo-card .photo-move button{flex:1;height:26px;border-radius:7px;border:1px solid var(--line-2);background:rgba(24,27,31,.9);color:var(--text);font-size:12px;cursor:pointer;padding:0;line-height:1}
+.photo-card .photo-move button:disabled{opacity:.3;cursor:not-allowed}
+.photo-card .photo-move button:hover{background:var(--sand);color:var(--bg)}
 .photos-empty{padding:24px 16px;text-align:center;color:var(--text-3);font-size:var(--fs-xs);border:1px dashed var(--line);border-radius:10px}
 .photos-empty[hidden]{display:none}
 .photo-add{display:flex;gap:8px}
@@ -265,10 +268,9 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 .gallery-main{position:relative;overflow:hidden;aspect-ratio:16/9;border-radius:12px;background:var(--bg-3)}
 .gallery-main img{width:100%;height:100%;object-fit:cover}
 .gallery-main .no-photo{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-3);font-size:var(--fs-xs);letter-spacing:.2em;text-transform:uppercase}
-.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:none;background:rgba(24,27,31,.85);color:var(--text);cursor:pointer;display:grid;place-items:center;z-index:3}
+.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:none;background:rgba(24,27,31,.85);color:var(--text);cursor:pointer;display:grid;place-items:center;z-index:3;font-size:18px}
 .gallery-nav:hover{background:var(--sand);color:var(--bg)}
 .gallery-nav.prev{left:12px}.gallery-nav.next{right:12px}
-.gallery-nav svg{width:15px;height:15px}
 .gallery-nav:disabled{opacity:0;pointer-events:none}
 .gallery-counter{position:absolute;bottom:12px;right:12px;padding:5px 10px;background:rgba(24,27,31,.85);color:var(--text);font-size:var(--fs-xs);border-radius:8px;border:1px solid var(--line-2);z-index:3}
 .gallery-thumbs{display:flex;gap:6px;margin-top:8px;overflow-x:auto;padding-bottom:5px}
@@ -293,7 +295,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 .modal-actions .btn{flex:1 1 auto;min-width:160px}
 .modal-reject-info{padding:14px 16px;border-radius:12px;background:rgba(224,92,92,.08);border:1px solid rgba(224,92,92,.3);color:var(--danger);font-size:var(--fs-sm);margin-bottom:16px}
 
-/* USERS PANEL */
+/* USERS */
 .users-table{width:100%;border-collapse:collapse;background:linear-gradient(160deg,var(--bg-2) 0%,#1a1d22 100%);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
 .users-table th,.users-table td{padding:12px 16px;text-align:left;font-size:var(--fs-sm);border-bottom:1px solid var(--line)}
 .users-table th{font-weight:600;color:var(--text-3);font-size:var(--fs-xxs);letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.02)}
@@ -301,31 +303,35 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 .users-table tr:hover td{background:rgba(255,255,255,.02)}
 .users-table .u-name{color:var(--text);font-weight:500}
 .users-table .u-role{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.06);color:var(--text-2)}
-.users-table .u-role.super{background:rgba(201,192,171,.2);color:var(--sand)}
+.users-table .u-role.super_admin{background:rgba(201,192,171,.2);color:var(--sand)}
 .users-table .u-role.admin{background:rgba(120,180,255,.15);color:#78b4ff}
 .users-table .u-actions{display:flex;gap:6px;flex-wrap:wrap}
 .users-table .u-actions button{font-size:var(--fs-xxs);padding:5px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--line-2);background:rgba(255,255,255,.04);color:var(--text-2)}
 .users-table .u-actions button:hover{background:rgba(255,255,255,.1);color:var(--text)}
 .users-table .u-actions button.danger{color:var(--danger);border-color:rgba(224,92,92,.3)}
 
-/* PERMISSIONS GRID */
+/* PERMS */
 .perms-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-top:16px}
 .perms-section{padding:18px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:14px}
-.perms-section h4{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:var(--fs-base);color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.perms-section h4{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:var(--fs-base);color:var(--text);margin-bottom:14px}
 .perms-table{width:100%;border-collapse:collapse}
 .perms-table td{padding:6px 0;font-size:var(--fs-sm);color:var(--text-2);vertical-align:middle}
 .perms-table td:first-child{color:var(--text);padding-right:10px}
 .perms-table td:nth-child(2){width:140px}
 .perms-table td:nth-child(3){width:200px}
 .perms-table select{font-size:var(--fs-xs);padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);width:100%}
-.perms-table select:focus{border-color:var(--sand)}
 .perms-table input[type="datetime-local"]{font-size:11px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);width:100%}
-.perms-table input[type="datetime-local"]:disabled{opacity:.3}
 .perm-action{display:flex;align-items:center;gap:10px;padding:5px 0}
 .perm-action label{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:var(--fs-sm);cursor:pointer;flex:1}
 .perm-action input[type="checkbox"]{width:16px;height:16px;accent-color:var(--sand);cursor:pointer}
 .perm-action .until-wrap{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-3)}
 .perm-action .until-wrap input{width:auto;font-size:11px;padding:4px 8px}
+
+/* USER MODAL TABS */
+.user-modal-tabs{display:flex;gap:4px;margin-bottom:16px;padding:4px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px}
+.um-tab{flex:1;font-family:'Manrope',sans-serif;font-size:var(--fs-sm);font-weight:500;padding:10px 14px;border-radius:9px;background:transparent;color:var(--text-3);border:none;cursor:pointer;transition:.2s var(--ease)}
+.um-tab:hover{color:var(--text)}
+.um-tab.active{background:rgba(255,255,255,.08);color:var(--text)}
 
 /* LOGS */
 .logs-list{display:flex;flex-direction:column;gap:6px}
@@ -341,47 +347,217 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 .log-row .log-badge.reject{background:rgba(224,92,92,.1);color:var(--danger)}
 .log-row .log-badge.create{background:rgba(120,180,255,.1);color:#78b4ff}
 
-/* SECTIONS */
-.tab-section{margin-bottom:40px}
-.tab-section h3{font-family:'Inter Tight',sans-serif;font-weight:500;font-size:18px;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.tab-section h3 .count{font-size:var(--fs-xs);font-weight:500;color:var(--text-3);padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.06)}
+/* ============================================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ v2
+   ============================================================ */
 
-/* MODAL FORM (пользователи) */
-.form-modal .modal-card{width:min(900px,100%)}
-.form-modal .modal-body{padding:24px 32px 32px}
-.user-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.user-form-grid .full{grid-column:1/-1}
+/* Safe area для iPhone */
+@supports (padding: env(safe-area-inset-bottom)){
+  .bulk-bar{ bottom: calc(12px + env(safe-area-inset-bottom)) }
+  .toast-wrap{ bottom: calc(22px + env(safe-area-inset-bottom)) }
+  body{ padding-bottom: env(safe-area-inset-bottom) }
+}
 
-/* АДАПТАЦИЯ */
+/* Тач-устройства: крупные зоны + против автозума iOS */
+@media (hover:none){
+  .btn{ min-height:44px }
+  .nav-tab{ min-height:36px }
+  .obj-row .actions button{ min-height:40px }
+  .photo-card .photo-move{ display:flex }
+  .photo-card .drag-handle{ display:none }
+  /* Форсируем 16px на инпутах — иначе iOS зумит страницу */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select, textarea{
+    font-size:16px !important;
+  }
+}
+
 @media (max-width:1280px){
   .objects-list{grid-template-columns:repeat(2,1fr)}
   .form-grid{grid-template-columns:repeat(2,1fr)}
 }
+
 @media (max-width:820px){
-  .admin-main{padding:100px 0 60px}
-  .nav-tabs{order:3;width:100%;justify-content:flex-start;overflow-x:auto;padding-bottom:4px}
-  .nav-user{margin-left:auto;padding-left:0;border-left:none}
-  .nav-user .who .role{display:none}
-  .objects-list{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}
+  .admin-main{padding:150px 0 80px}
+  .nav-wrap{ padding:10px var(--gutter) }
+  .nav-inner{
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .brand-center{ flex:1 }
+  .brand-center .name{ font-size:12px; letter-spacing:.22em }
+  .brand-center .sub{ font-size:6.5px }
+  .brand-center .logo{ width:18px }
+  .nav-user{
+    margin-left:0;
+    padding-left:0;
+    border-left:none;
+  }
+  .nav-user .who{ padding:5px 10px; font-size:11px }
+  .logout-btn{ padding:6px 10px; font-size:10.5px }
+
+  .nav-tabs{
+    order:3;
+    width:100%;
+    margin-left:0;
+    padding-top:6px;
+    border-top:1px solid var(--line);
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .nav-tabs::-webkit-scrollbar{ display:none }
+  .nav-tab{
+    font-size:12px;
+    padding:8px 14px;
+    flex-shrink:0;
+  }
+
   .panel-head{flex-direction:column;align-items:stretch}
   .panel-actions{width:100%}
   .panel-actions .btn{flex:1}
-  .filters-panel{grid-template-columns:1fr 1fr}
-  .filter-toggle{display:inline-flex}
-  .users-table{font-size:var(--fs-xs)}
-  .users-table th,.users-table td{padding:8px 10px}
-  .user-form-grid{grid-template-columns:1fr}
+  .objects-list{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+
+  /* Аккордеон секций формы */
+  .form-section[data-collapsible] .form-section-title{
+    cursor:pointer;
+    position:relative;
+    padding-right:30px;
+  }
+  .form-section[data-collapsible] .form-section-title::after{
+    content:"";
+    position:absolute;
+    right:8px;
+    top:50%;
+    width:8px;height:8px;
+    border-right:2px solid var(--text-3);
+    border-bottom:2px solid var(--text-3);
+    transform:translateY(-70%) rotate(45deg);
+    transition:.25s var(--ease);
+  }
+  .form-section[data-collapsible].open .form-section-title::after{
+    transform:translateY(-30%) rotate(-135deg);
+  }
+  .form-section[data-collapsible]:not(.open) .form-grid{
+    display:none;
+  }
+  .form-section[data-collapsible]:not(.open){
+    padding-bottom:14px;
+  }
+
+  /* Залипающие кнопки формы */
+  .form-actions{
+    position:sticky;
+    bottom:0;
+    background:rgba(24,27,31,.95);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-top:1px solid var(--line-2);
+    padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+    z-index:50;
+    flex-direction:row;
+    gap:8px;
+  }
+  .form-actions .btn{
+    flex:1;
+    width:auto;
+  }
+
+  /* Модалка объекта — фикс-кнопка закрытия */
   .modal{padding:0;align-items:flex-end}
-  .modal-card{width:100%;max-height:92svh;border-radius:20px 20px 0 0}
-  .modal-body{padding:20px 18px 28px}
-  .gallery-main{aspect-ratio:4/3}
+  .modal-card{width:100%;max-height:92svh;border-radius:20px 20px 0 0;padding-top:0}
+  .modal-close{
+    position:fixed;
+    top:14px;
+    right:14px;
+    margin:0;
+    float:none;
+    z-index:20;
+    background:rgba(24,27,31,.9);
+  }
+  .gallery{margin:0}
+  .gallery-main{border-radius:0;aspect-ratio:4/3}
+  .gallery-thumbs{padding:8px 14px;margin-top:0;background:rgba(0,0,0,.2)}
+  .modal-body{padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
+  .modal-actions{flex-direction:column}
+  .modal-actions .btn{min-width:100%}
+
+  /* Bulk-bar — сетка 2×2 */
+  .bulk-bar{
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    gap:8px;
+  }
+  .bulk-bar .bulk-count{
+    font-size:13px;
+    padding-bottom:6px;
+    border-right:none;
+    width:100%;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    padding-right:0;
+  }
+  .bulk-bar .bulk-actions{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+  .bulk-bar button{
+    font-size:12px;
+    padding:10px 8px;
+    min-height:40px;
+  }
+
+  /* Тосты — не наезжают на bulk-bar */
+  body.has-selection .toast-wrap{
+    bottom: calc(160px + env(safe-area-inset-bottom));
+  }
   .toast-wrap{left:16px;right:16px;bottom:14px;max-width:none}
   .toast{width:100%}
+
+  /* Фильтры */
+  .filters-panel{grid-template-columns:1fr 1fr}
+  .filter-toggle{display:inline-flex}
+
+  /* Users */
+  .users-table{font-size:var(--fs-xs)}
+  .users-table th,.users-table td{padding:8px 10px}
+  .users-table thead{display:none}
+  .users-table tr{display:grid;grid-template-columns:1fr;gap:6px;padding:12px;border-bottom:1px solid var(--line)}
+  .users-table tr:last-child{border-bottom:none}
+  .users-table td{border:none;padding:0;display:flex;justify-content:space-between;gap:8px}
+  .users-table td::before{
+    content:attr(data-label);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--text-3);
+    font-weight:600;
+  }
+
+  /* Perms матрица — вертикально */
+  .perms-table tr{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:6px;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .perms-table tr:last-child{border-bottom:none}
+  .perms-table td{padding:0}
+  .perms-table td:nth-child(2),
+  .perms-table td:nth-child(3){width:100%}
+  .perms-table td:first-child{font-weight:600;font-size:var(--fs-sm)}
+
+  /* Логи */
   .log-row{grid-template-columns:1fr;gap:4px}
 }
+
 @media (max-width:480px){
   .filters-panel{grid-template-columns:1fr}
+  .photo-add{flex-direction:column}
+  .photo-add button{width:100%}
 }
 </style>
 </head>
@@ -402,7 +578,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
     </a>
     <div class="nav-tabs" id="navTabs">
       <button class="nav-tab active" data-tab="objects">Объекты</button>
-      <button class="nav-tab" data-tab="pending" hidden>На согласовании <span id="pendingCount"></span></button>
+      <button class="nav-tab" data-tab="pending" hidden>На согласовании</button>
       <button class="nav-tab" data-tab="users" hidden>Пользователи</button>
       <button class="nav-tab" data-tab="logs" hidden>Логи</button>
     </div>
@@ -446,14 +622,8 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             <h2>Объекты <em>недвижимости</em></h2>
           </div>
           <div class="panel-actions">
-            <button class="btn btn-ghost" id="refreshBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 12a11 11 0 1 1-3.5-8.1"/><path d="M23 4v6h-6"/></svg>
-              Обновить
-            </button>
-            <button class="btn btn-primary" id="showAddBtn" hidden>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
-              Добавить объект
-            </button>
+            <button class="btn btn-ghost" id="refreshBtn">Обновить</button>
+            <button class="btn btn-primary" id="showAddBtn" hidden>+ Добавить объект</button>
           </div>
         </div>
 
@@ -463,7 +633,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             <button type="button" class="close-form" id="closeFormBtn" aria-label="Закрыть">✕</button>
           </div>
 
-          <div class="form-section">
+          <div class="form-section" data-collapsible>
             <div class="form-section-title">
               <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></span>
               <h4>Основное</h4>
@@ -496,7 +666,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             </div>
           </div>
 
-          <div class="form-section">
+          <div class="form-section" data-collapsible>
             <div class="form-section-title">
               <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.5-7-10a7 7 0 1 1 14 0c0 5.5-7 10-7 10Z"/><circle cx="12" cy="11" r="2.5"/></svg></span>
               <h4>Расположение</h4>
@@ -527,7 +697,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             </div>
           </div>
 
-          <div class="form-section">
+          <div class="form-section" data-collapsible>
             <div class="form-section-title">
               <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>
               <h4>Характеристики</h4>
@@ -549,7 +719,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             </div>
           </div>
 
-          <div class="form-section">
+          <div class="form-section" data-collapsible>
             <div class="form-section-title">
               <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 15l-5-5-4 4-2-2-7 7"/></svg></span>
               <h4>Медиа</h4>
@@ -564,7 +734,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
                     <input type="url" id="photoUrlInput" placeholder="https://example.com/photo.jpg">
                     <button type="button" id="photoAddBtn">Добавить</button>
                   </div>
-                  <div class="photos-hint">Перетащите, чтобы изменить порядок. Первое фото — обложка.</div>
+                  <div class="photos-hint">Перетащите или используйте стрелки ◀▶ для порядка. Первое фото — обложка.</div>
                 </div>
                 <textarea name="photos" class="photos-source" id="photosSource" tabindex="-1"></textarea>
               </div>
@@ -574,7 +744,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             </div>
           </div>
 
-          <div class="form-section">
+          <div class="form-section" data-collapsible>
             <div class="form-section-title">
               <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
               <h4>Описание</h4>
@@ -599,7 +769,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
         </form>
 
         <div class="list-toolbar">
-          <input type="search" id="listSearch" class="list-search" placeholder="Поиск по названию, району, адресу...">
+          <input type="search" id="listSearch" class="list-search" placeholder="Поиск...">
           <label class="select-all" id="selectAllLabel" hidden>
             <input type="checkbox" id="selectAll">
             <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M5 12l5 5L20 7"/></svg></span>
@@ -609,7 +779,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
           <span class="list-count" id="listCount">—</span>
         </div>
 
-        <div class="filters-panel" id="filtersPanel">
+        <div class="filters-panel" id="filtersPanel" hidden>
           <div class="filter-field">
             <label>Сделка</label>
             <select id="fDeal">
@@ -643,7 +813,7 @@ button,input,textarea,select{font-family:inherit;color:inherit}
             <input id="fDistrict" type="search" placeholder="Например: Центр">
           </div>
           <div class="filter-field filter-price full">
-            <div><label>Цена, ₽ — от</label><input id="fPriceMin" type="number" min="0" placeholder="0"></div>
+            <div><label>Цена — от</label><input id="fPriceMin" type="number" min="0" placeholder="0"></div>
             <span class="dash">—</span>
             <div><label>до</label><input id="fPriceMax" type="number" min="0" placeholder="∞"></div>
           </div>
@@ -750,49 +920,57 @@ button,input,textarea,select{font-family:inherit;color:inherit}
 </div>
 
 <!-- MODAL: пользователь -->
-<div class="modal form-modal" id="userModal" role="dialog">
+<div class="modal" id="userModal" role="dialog">
   <div class="modal-backdrop" data-modal-close></div>
   <div class="modal-card">
     <button class="modal-close" data-modal-close>✕</button>
     <div class="modal-body">
-      <h2 id="userModalTitle" style="font-family:'Inter Tight',sans-serif;font-weight:400;font-size:22px;margin-bottom:20px">Новый пользователь</h2>
-      <div class="user-form-grid">
-        <div class="fg">
-          <label>Логин *</label>
-          <input id="uUsername" placeholder="ivan" autocomplete="off">
-        </div>
-        <div class="fg">
-          <label>Отображаемое имя</label>
-          <input id="uDisplayName" placeholder="Иван Петров">
-        </div>
-        <div class="fg">
-          <label id="uPasswordLabel">Пароль * (мин. 8)</label>
-          <input id="uPassword" type="password" autocomplete="new-password">
-        </div>
-        <div class="fg">
-          <label>Роль</label>
-          <select id="uRole">
-            <option value="user">Пользователь</option>
-            <option value="admin">Админ</option>
-          </select>
+      <h2 id="userModalTitle" style="font-family:'Inter Tight',sans-serif;font-weight:400;font-size:22px;margin-bottom:16px">Новый пользователь</h2>
+
+      <div class="user-modal-tabs" id="userModalTabs">
+        <button type="button" class="um-tab active" data-um="main">Основное</button>
+        <button type="button" class="um-tab" data-um="perms">Права</button>
+      </div>
+
+      <div class="um-pane" data-um="main">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="fg">
+            <label>Логин *</label>
+            <input id="uUsername" placeholder="ivan" autocomplete="off">
+          </div>
+          <div class="fg">
+            <label>Отображаемое имя</label>
+            <input id="uDisplayName" placeholder="Иван Петров">
+          </div>
+          <div class="fg">
+            <label id="uPasswordLabel">Пароль * (мин. 8)</label>
+            <input id="uPassword" type="password" autocomplete="new-password">
+          </div>
+          <div class="fg">
+            <label>Роль</label>
+            <select id="uRole">
+              <option value="user">Пользователь</option>
+              <option value="admin">Админ</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div id="permsWrap" hidden>
-        <h3 style="font-family:'Inter Tight',sans-serif;font-weight:500;font-size:16px;margin-bottom:12px">Права на поля</h3>
+      <div class="um-pane" data-um="perms" hidden>
+        <input type="search" id="permSearch" class="list-search" placeholder="Поиск по полю..." style="margin-bottom:14px">
         <div class="perms-section">
+          <h4>Права на поля</h4>
           <table class="perms-table" id="fieldsTable"></table>
         </div>
-
-        <h3 style="font-family:'Inter Tight',sans-serif;font-weight:500;font-size:16px;margin:20px 0 12px">Разрешения на действия</h3>
-        <div class="perms-section">
+        <div class="perms-section" style="margin-top:16px">
+          <h4>Разрешения на действия</h4>
           <div id="actionsWrap"></div>
         </div>
       </div>
 
-      <div class="form-actions" style="padding:20px 0 0;background:transparent;border:none">
-        <button type="button" class="btn btn-ghost" data-modal-close>Отмена</button>
-        <button type="button" class="btn btn-primary" id="saveUserBtn">Сохранить</button>
+      <div style="display:flex;gap:8px;margin-top:20px">
+        <button type="button" class="btn btn-ghost" style="flex:1" data-modal-close>Отмена</button>
+        <button type="button" class="btn btn-primary" style="flex:1" id="saveUserBtn">Сохранить</button>
       </div>
     </div>
   </div>
@@ -867,19 +1045,12 @@ const NALCHIK_DISTRICTS = ['Центр','Горная','Стрелка','Вол�
 /* ============================================================
    SESSION
    ============================================================ */
-let session = null; // { token, expiresAt, user }
+let session = null;
 function saveSession(s){ session = s; try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch(e){} }
 function loadSession(){ try { const raw = sessionStorage.getItem(SESSION_KEY); if (raw) session = JSON.parse(raw); } catch(e){} return session; }
 function clearSession(){ session = null; try { sessionStorage.removeItem(SESSION_KEY); } catch(e){} }
-
-function can(action){
-  if (!session || !session.user || !session.user.permissions) return false;
-  return session.user.permissions.actions?.[action] === true;
-}
-function fieldLevel(field){
-  if (!session || !session.user || !session.user.permissions) return 'hidden';
-  return session.user.permissions.fields?.[field]?.level || 'hidden';
-}
+function can(action){ return !!(session?.user?.permissions?.actions?.[action] === true); }
+function fieldLevel(field){ return session?.user?.permissions?.fields?.[field]?.level || 'hidden'; }
 function isSuper(){ return session?.user?.role === 'super_admin'; }
 
 /* ============================================================
@@ -895,8 +1066,7 @@ async function apiPost(payload){
   });
   const json = await res.json();
   if (json && json.error === 'unauthorized'){
-    clearSession();
-    applySession();
+    clearSession(); applySession();
     throw new Error('Сессия истекла, войдите заново');
   }
   return json;
@@ -914,6 +1084,22 @@ function toast(msg, type = ''){
   setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; }, 2600);
   setTimeout(() => t.remove(), 3100);
 }
+function showFieldError(msg, fieldName){
+  toast(msg, 'err');
+  if (fieldName){
+    const el = document.querySelector(`[data-field="${fieldName}"]`);
+    if (el){
+      el.scrollIntoView({ behavior:'smooth', block:'center' });
+      const input = el.querySelector('input, select, textarea');
+      if (input){
+        input.focus({ preventScroll:true });
+        input.style.transition = 'box-shadow .3s';
+        input.style.boxShadow = '0 0 0 2px var(--danger)';
+        setTimeout(() => input.style.boxShadow = '', 1600);
+      }
+    }
+  }
+}
 
 /* ============================================================
    REFS
@@ -922,19 +1108,16 @@ const $ = id => document.getElementById(id);
 const loginScreen = $('loginScreen');
 const panelScreen = $('panelScreen');
 const navWrap = $('navWrap');
-const navUser = $('navUser');
 const whoami = $('whoami');
 const loginForm = $('loginForm');
 const loginBtn = $('loginBtn');
 const loginError = $('loginError');
-
 const objectsList = $('objectsList');
 const listSearch = $('listSearch');
 const listCount = $('listCount');
 const listMoreWrap = $('listMoreWrap');
 const listMoreBtn = $('listMoreBtn');
 const listMoreCount = $('listMoreCount');
-
 const objForm = $('objForm');
 const formTitle = $('formTitle');
 const saveBtn = $('saveBtn');
@@ -942,37 +1125,26 @@ const showAddBtn = $('showAddBtn');
 const closeFormBtn = $('closeFormBtn');
 const cancelFormBtn = $('cancelFormBtn');
 const refreshBtn = $('refreshBtn');
-
 const selType = $('selType');
 const selCity = $('selCity');
 const selDistrict = $('selDistrict');
 const wrapOtherCity = $('wrapOtherCity');
 const otherCity = $('otherCity');
 const wrapDistrict = $('wrapDistrict');
-
 const photosGrid = $('photosGrid');
 const photosEmpty = $('photosEmpty');
 const photosSource = $('photosSource');
 const photoUrlInput = $('photoUrlInput');
 const photoAddBtn = $('photoAddBtn');
-
 const filterToggle = $('filterToggle');
 const filtersPanel = $('filtersPanel');
 const filterReset = $('filterReset');
 const activeFilters = $('activeFilters');
-const fDeal = $('fDeal');
-const fType = $('fType');
-const fStatus = $('fStatus');
-const fDistrict = $('fDistrict');
-const fPriceMin = $('fPriceMin');
-const fPriceMax = $('fPriceMax');
-const fSort = $('fSort');
-
-const selectAllLabel = $('selectAllLabel');
-const selectAll = $('selectAll');
-const bulkBar = $('bulkBar');
-const bulkCountEl = $('bulkCount');
-
+const fDeal = $('fDeal'); const fType = $('fType'); const fStatus = $('fStatus');
+const fDistrict = $('fDistrict'); const fPriceMin = $('fPriceMin');
+const fPriceMax = $('fPriceMax'); const fSort = $('fSort');
+const selectAllLabel = $('selectAllLabel'); const selectAll = $('selectAll');
+const bulkBar = $('bulkBar'); const bulkCountEl = $('bulkCount');
 const objModal = $('objModal');
 const userModal = $('userModal');
 
@@ -1010,13 +1182,12 @@ function applySession(){
     navWrap.hidden = false;
     whoami.textContent = session.user.displayName || session.user.username;
 
-    // какие вкладки видны
-    $('navTabs').querySelector('[data-tab="pending"]').hidden = !can('objects.moderate');
-    $('navTabs').querySelector('[data-tab="users"]').hidden = !isSuper();
-    $('navTabs').querySelector('[data-tab="logs"]').hidden = !(isSuper() || can('logs.view'));
+    document.querySelector('[data-tab="pending"]').hidden = !can('objects.moderate');
+    document.querySelector('[data-tab="users"]').hidden = !isSuper();
+    document.querySelector('[data-tab="logs"]').hidden = !(isSuper() || can('logs.view'));
 
     showAddBtn.hidden = !can('objects.create');
-    selectAllLabel.hidden = !(can('objects.bulk'));
+    selectAllLabel.hidden = !can('objects.bulk');
 
     switchTab('objects');
     loadObjects();
@@ -1056,11 +1227,7 @@ loginForm.addEventListener('submit', async e => {
   const orig = loginBtn.innerHTML;
   loginBtn.innerHTML = '<span class="spinner"></span> Проверяем...';
   try {
-    const r = await apiPost({
-      action: 'login',
-      username, password,
-      userAgent: navigator.userAgent
-    });
+    const r = await apiPost({ action: 'login', username, password, userAgent: navigator.userAgent });
     if (!r.ok) throw new Error(r.error || 'Ошибка входа');
     saveSession({ token: r.token, expiresAt: r.expiresAt, user: r.user });
     loginForm.reset();
@@ -1103,9 +1270,7 @@ async function loadObjects(){
 
 function getFilters(){
   return {
-    deal: fDeal.value.trim(),
-    type: fType.value.trim(),
-    status: fStatus.value.trim(),
+    deal: fDeal.value.trim(), type: fType.value.trim(), status: fStatus.value.trim(),
     district: fDistrict.value.trim(),
     priceMin: fPriceMin.value !== '' ? Number(fPriceMin.value) : null,
     priceMax: fPriceMax.value !== '' ? Number(fPriceMax.value) : null,
@@ -1125,7 +1290,7 @@ function updateFilterUI(){
   if (f.district) n++;
   if (f.priceMin !== null || f.priceMax !== null) n++;
   if (f.sort && f.sort !== 'new') n++;
-  filterCount.textContent = n > 0 ? n : '';
+  $('filterCount').textContent = n > 0 ? '(' + n + ')' : '';
 
   const chips = [];
   if (f.deal) chips.push(['Сделка: ' + f.deal, 'deal']);
@@ -1157,9 +1322,7 @@ activeFilters.addEventListener('click', e => {
   if (k === 'price'){ fPriceMin.value = ''; fPriceMax.value = ''; }
   visibleCount = PAGE_SIZE; renderList();
 });
-filterToggle.addEventListener('click', () => {
-  filtersPanel.hidden = !filtersPanel.hidden;
-});
+filterToggle.addEventListener('click', () => { filtersPanel.hidden = !filtersPanel.hidden; });
 
 listSearch.addEventListener('input', () => { visibleCount = PAGE_SIZE; renderList(); });
 listMoreBtn.addEventListener('click', () => { visibleCount += PAGE_SIZE; renderList(); });
@@ -1181,12 +1344,10 @@ function renderList(){
   const q = (listSearch.value || '').toLowerCase().trim();
   const f = getFilters();
   let list = ALL_OBJECTS.slice();
-
   if (q) list = list.filter(o =>
     (o.title || '').toLowerCase().includes(q) ||
     (o.district || '').toLowerCase().includes(q) ||
     (o.address || '').toLowerCase().includes(q));
-
   if (f.deal) list = list.filter(o => (o.deal || 'Продажа') === f.deal);
   if (f.type) list = list.filter(o => (o.type || '') === f.type);
   if (f.status) list = list.filter(o => (o.status || 'active') === f.status);
@@ -1204,7 +1365,7 @@ function renderList(){
     case 'price-desc': list.sort((a,b) => (Number(b.price)||0) - (Number(a.price)||0)); break;
     case 'area-desc': list.sort((a,b) => (Number(b.area)||0) - (Number(a.area)||0)); break;
     case 'area-asc': list.sort((a,b) => (Number(a.area)||0) - (Number(b.area)||0)); break;
-    case 'new': default: list.reverse();
+    default: list.reverse();
   }
 
   const total = ALL_OBJECTS.length;
@@ -1268,15 +1429,14 @@ function renderList(){
   if (visible < found){
     listMoreWrap.hidden = false;
     listMoreCount.textContent = `(${found - visible})`;
-  } else {
-    listMoreWrap.hidden = true;
-  }
+  } else listMoreWrap.hidden = true;
+
   updateFilterUI();
   updateBulkBar();
 }
 
 /* ============================================================
-   OBJECTS: EDIT / DELETE / MODAL
+   EDIT / DELETE / MODAL
    ============================================================ */
 objectsList.addEventListener('click', async e => {
   if (e.target.closest('[data-noopen]')) return;
@@ -1325,6 +1485,7 @@ function updateBulkBar(){
   bulkCountEl.textContent = n;
   bulkBar.classList.toggle('show', n > 0);
   selectAllLabel.hidden = !can('objects.bulk');
+  document.body.classList.toggle('has-selection', n > 0);
 }
 function clearSelection(){
   selectedIds.clear();
@@ -1364,21 +1525,18 @@ bulkBar.addEventListener('click', async e => {
   if (action === 'clear'){ clearSelection(); return; }
   const ids = Array.from(selectedIds);
   if (!ids.length) return;
-
   if (action === 'delete'){
     if (!confirm(`Удалить ${ids.length} объектов?`)) return;
   }
-
   bulkBar.querySelectorAll('button').forEach(b => b.disabled = true);
   let ok = 0, fail = 0;
   for (const id of ids){
     try {
       let r;
-      if (action === 'delete'){
-        r = await apiPost({ action: 'delete', id });
-      } else {
+      if (action === 'delete') r = await apiPost({ action: 'delete', id });
+      else {
         const src = ALL_OBJECTS.find(o => String(o.id) === String(id));
-        if (!src) { fail++; continue; }
+        if (!src){ fail++; continue; }
         const copy = { ...src, status: action === 'hide' ? 'hidden' : 'active' };
         delete copy._row;
         r = await apiPost({ action: 'update', id, object: copy });
@@ -1401,14 +1559,10 @@ closeFormBtn.addEventListener('click', closeForm);
 cancelFormBtn.addEventListener('click', closeForm);
 
 function applyFormPermissions(){
-  // Скрываем/блокируем поля по правам
   document.querySelectorAll('[data-field]').forEach(el => {
     const f = el.dataset.field;
     const lvl = fieldLevel(f);
-    if (lvl === 'hidden'){
-      el.hidden = true;
-      return;
-    }
+    if (lvl === 'hidden'){ el.hidden = true; return; }
     el.hidden = false;
     const input = el.querySelector('input, textarea, select');
     if (input){
@@ -1421,7 +1575,6 @@ function applyFormPermissions(){
       }
     }
   });
-  // Форма: показываем кнопку «Сохранить» только если есть права хоть что-то менять
   const canSave = FIELD_LIST.some(f => fieldLevel(f) === 'edit');
   saveBtn.hidden = !canSave;
 }
@@ -1433,15 +1586,10 @@ function openForm(obj){
 
   if (obj){
     const d = obj.district || '';
-    if (NALCHIK_DISTRICTS.includes(d)){
-      selCity.value = 'Нальчик'; selDistrict.value = d; otherCity.value = '';
-    } else if (d && ['Чегем','Прохладный','Баксан','Майский','Тырныауз','Нарткала'].includes(d)){
-      selCity.value = d; selDistrict.value = ''; otherCity.value = '';
-    } else if (d){
-      selCity.value = 'Другой'; otherCity.value = d; selDistrict.value = '';
-    } else {
-      selCity.value = 'Нальчик'; selDistrict.value = ''; otherCity.value = '';
-    }
+    if (NALCHIK_DISTRICTS.includes(d)){ selCity.value = 'Нальчик'; selDistrict.value = d; otherCity.value = ''; }
+    else if (d && ['Чегем','Прохладный','Баксан','Майский','Тырныауз','Нарткала'].includes(d)){ selCity.value = d; selDistrict.value = ''; otherCity.value = ''; }
+    else if (d){ selCity.value = 'Другой'; otherCity.value = d; selDistrict.value = ''; }
+    else { selCity.value = 'Нальчик'; selDistrict.value = ''; otherCity.value = ''; }
     photoList = parsePhotos(obj.photos);
     renderPhotos();
     Object.keys(obj).forEach(k => {
@@ -1458,6 +1606,12 @@ function openForm(obj){
   updateCityFields();
   updateFieldsByType();
   applyFormPermissions();
+
+  // Раскрываем первую секцию на мобильных
+  objForm.querySelectorAll('.form-section[data-collapsible]').forEach((s, i) => {
+    s.classList.toggle('open', i === 0);
+  });
+
   objForm.hidden = false;
   objForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -1474,43 +1628,34 @@ function closeForm(){
 objForm.addEventListener('submit', async e => {
   e.preventDefault();
   if (!session) return;
-
   const fd = new FormData(objForm);
   const data = {};
   fd.forEach((v,k) => { data[k] = (v || '').toString().trim(); });
   data.photos = photoList.join('\n');
 
   if (!editingId){
-    if (fieldLevel('title') !== 'hidden' && !data.title) return toast('Укажите заголовок', 'err');
-    if (fieldLevel('type') !== 'hidden' && !data.type) return toast('Выберите тип', 'err');
-    if (fieldLevel('deal') !== 'hidden' && !data.deal) return toast('Выберите сделку', 'err');
-    if (fieldLevel('price') !== 'hidden' && !data.price) return toast('Укажите цену', 'err');
+    if (!data.title && fieldLevel('title') !== 'hidden') return showFieldError('Укажите заголовок', 'title');
+    if (!data.type && fieldLevel('type') !== 'hidden') return showFieldError('Выберите тип', 'type');
+    if (!data.deal && fieldLevel('deal') !== 'hidden') return showFieldError('Выберите сделку', 'deal');
+    if (!data.price && fieldLevel('price') !== 'hidden') return showFieldError('Укажите цену', 'price');
   }
 
   const cityVal = selCity.value;
-  if (cityVal === 'Нальчик'){
-    data.district = selDistrict.value;
-  } else if (cityVal === 'Другой'){
-    data.district = otherCity.value.trim();
-  } else {
-    data.district = cityVal;
-  }
+  if (cityVal === 'Нальчик') data.district = selDistrict.value;
+  else if (cityVal === 'Другой') data.district = otherCity.value.trim();
+  else data.district = cityVal;
   if (cityVal !== 'Нальчик' && data.address && !data.address.toLowerCase().includes(cityVal.toLowerCase())){
     data.address = cityVal + ', ' + data.address;
   }
   ['rooms','area','kitchenArea','floor','floors','yearBuilt','price','bathrooms'].forEach(k => {
-    if (data[k] !== '') data[k] = Number(data[k]);
-    else data[k] = '';
+    if (data[k] !== '') data[k] = Number(data[k]); else data[k] = '';
   });
 
   saveBtn.disabled = true;
   const orig = saveBtn.innerHTML;
   saveBtn.innerHTML = '<span class="spinner"></span> Сохраняем...';
   try {
-    const payload = {
-      action: editingId ? 'update' : 'add',
-      object: data
-    };
+    const payload = { action: editingId ? 'update' : 'add', object: data };
     if (editingId) payload.id = editingId;
     const r = await apiPost(payload);
     if (!r.ok) throw new Error(r.error);
@@ -1526,7 +1671,7 @@ objForm.addEventListener('submit', async e => {
 });
 
 /* ============================================================
-   DYNAMIC FORM (тип / город)
+   DYNAMIC FORM
    ============================================================ */
 function updateFieldsByType(){
   const t = selType.value;
@@ -1576,12 +1721,10 @@ selCity.addEventListener('change', updateCityFields);
 /* ============================================================
    PHOTOS
    ============================================================ */
-function parsePhotos(str){
-  return (str || '').split(/\r?\n|;/).map(s => s.trim()).filter(Boolean);
-}
+function parsePhotos(str){ return (str || '').split(/\r?\n|;/).map(s => s.trim()).filter(Boolean); }
 function syncPhotosSource(){ photosSource.value = photoList.join('\n'); }
 function renderPhotos(){
-  if (fieldLevel('photos') === 'hidden'){ return; }
+  if (fieldLevel('photos') === 'hidden') return;
   if (!photoList.length){
     photosGrid.innerHTML = '';
     photosEmpty.hidden = false;
@@ -1594,6 +1737,10 @@ function renderPhotos(){
       <img src="${escapeAttr(url)}" onerror="this.parentNode.style.opacity=.3">
       ${i===0 ? '<span class="cover-badge">Обложка</span>' : `<span class="index-badge">${i+1}</span>`}
       <button type="button" class="remove-photo" data-remove="${i}">✕</button>
+      <div class="photo-move">
+        <button type="button" data-move="${i}" data-dir="-1" ${i===0?'disabled':''}>◀</button>
+        <button type="button" data-move="${i}" data-dir="1" ${i===photoList.length-1?'disabled':''}>▶</button>
+      </div>
     </div>`).join('');
   syncPhotosSource();
 }
@@ -1610,10 +1757,23 @@ photoUrlInput.addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); photoAddBtn.click(); }
 });
 photosGrid.addEventListener('click', e => {
-  const b = e.target.closest('[data-remove]');
-  if (!b) return;
-  photoList.splice(Number(b.dataset.remove), 1);
-  renderPhotos();
+  const rm = e.target.closest('[data-remove]');
+  if (rm){
+    e.preventDefault(); e.stopPropagation();
+    photoList.splice(Number(rm.dataset.remove), 1);
+    renderPhotos();
+    return;
+  }
+  const mv = e.target.closest('[data-move]');
+  if (mv){
+    e.preventDefault(); e.stopPropagation();
+    const idx = Number(mv.dataset.move);
+    const dir = Number(mv.dataset.dir);
+    const to = idx + dir;
+    if (to < 0 || to >= photoList.length) return;
+    [photoList[idx], photoList[to]] = [photoList[to], photoList[idx]];
+    renderPhotos();
+  }
 });
 
 let dragIdx = null;
@@ -1686,55 +1846,41 @@ function openModal(objId){
   if (o.parking) specs.push(['Парковка', o.parking]);
   if (o.renovation && isRes) specs.push(['Ремонт', o.renovation]);
   if (o.developer) specs.push(['Застройщик', o.developer]);
-
-  // только те, что пользователю видно
-  const visibleSpecs = specs.filter(([l]) => {
-    const key = FIELD_LIST.find(f => (FIELD_LABELS[f] || '').toLowerCase().includes(l.toLowerCase().split(' ')[0]));
-    return true;
-  });
   $('mSpecs').innerHTML = specs.map(([l,v]) =>
     `<div class="spec"><label>${escapeAttr(l)}</label><b>${escapeAttr(v)}</b></div>`).join('');
 
   if (o.video && fieldLevel('video') !== 'hidden'){
     $('mVideo').hidden = false;
     $('mVideo').innerHTML = buildVideoHTML(o.video);
-  } else {
-    $('mVideo').hidden = true;
-    $('mVideo').innerHTML = '';
-  }
+  } else { $('mVideo').hidden = true; $('mVideo').innerHTML = ''; }
 
   $('mDesc').textContent = (fieldLevel('descFull') !== 'hidden' ? o.descFull : '') || o.descShort || '';
   const feats = fieldLevel('features') !== 'hidden'
-    ? (o.features || '').split(/\r?\n|;/).map(s => s.trim()).filter(Boolean)
-    : [];
+    ? (o.features || '').split(/\r?\n|;/).map(s => s.trim()).filter(Boolean) : [];
   $('mFeatures').innerHTML = feats.map(f => `<span>${escapeAttr(f)}</span>`).join('');
   $('mFeatures').hidden = feats.length === 0;
   $('mPrice').textContent = Number(o.price) ? Number(o.price).toLocaleString('ru-RU') + ' ₽' : '—';
 
-  const rejectInfo = $('mRejectInfo');
-  if (o.status === 'rejected' && o.rejectReason){
-    rejectInfo.hidden = false;
-    rejectInfo.textContent = 'Отклонено: ' + o.rejectReason;
-  } else rejectInfo.hidden = true;
+  const ri = $('mRejectInfo');
+  if (o.status === 'rejected' && o.rejectReason){ ri.hidden = false; ri.textContent = 'Отклонено: ' + o.rejectReason; }
+  else ri.hidden = true;
 
-  // Кнопки в модалке — по правам
-  const actions = [];
+  const acts = [];
   const isOwner = o.owner === session.user.username;
   const canEdit = can('objects.edit.all') || (isOwner && can('objects.create'));
   const canDel = can('objects.delete.all') || (isOwner && can('objects.delete.own'));
   const canMod = can('objects.moderate');
 
   if (o.status === 'pending' && canMod){
-    actions.push(`<button class="btn btn-ok" data-mm="approve">Одобрить</button>`);
-    actions.push(`<button class="btn btn-danger" data-mm="reject">Отклонить</button>`);
-    actions.push(`<button class="btn btn-warn" data-mm="edit_and_approve">Исправить и опубликовать</button>`);
+    acts.push(`<button class="btn btn-ok" data-mm="approve">Одобрить</button>`);
+    acts.push(`<button class="btn btn-danger" data-mm="reject">Отклонить</button>`);
   }
   if (o.status === 'pending' && isOwner && !canMod){
-    actions.push(`<button class="btn btn-ghost" data-mm="revoke">Отозвать с модерации</button>`);
+    acts.push(`<button class="btn btn-ghost" data-mm="revoke">Отозвать</button>`);
   }
-  if (canEdit) actions.push(`<button class="btn btn-ghost" data-mm="edit">Редактировать</button>`);
-  if (canDel) actions.push(`<button class="btn btn-ghost" style="color:var(--danger);border-color:rgba(224,92,92,.3)" data-mm="delete">Удалить</button>`);
-  $('mActions').innerHTML = actions.join('');
+  if (canEdit) acts.push(`<button class="btn btn-ghost" data-mm="edit">Редактировать</button>`);
+  if (canDel) acts.push(`<button class="btn btn-ghost" style="color:var(--danger);border-color:rgba(224,92,92,.3)" data-mm="delete">Удалить</button>`);
+  $('mActions').innerHTML = acts.join('');
 
   objModal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1749,54 +1895,34 @@ objModal.addEventListener('click', async e => {
     if (!confirm('Удалить объект?')) return;
     const r = await apiPost({ action: 'delete', id: modalObj.id });
     if (r.ok){ toast('Удалено', 'ok'); closeModal(); loadObjects(); }
-    else toast(r.error, 'err');
-    return;
+    else toast(r.error, 'err'); return;
   }
   if (m === 'approve'){
     const r = await apiPost({ action: 'approve', id: modalObj.id });
     if (r.ok){ toast('Одобрено', 'ok'); closeModal(); loadObjects(); }
-    else toast(r.error, 'err');
-    return;
+    else toast(r.error, 'err'); return;
   }
   if (m === 'reject'){
     const reason = prompt('Причина отклонения:', '');
     if (!reason) return;
     const r = await apiPost({ action: 'reject', id: modalObj.id, comment: reason });
     if (r.ok){ toast('Отклонено', 'ok'); closeModal(); loadObjects(); }
-    else toast(r.error, 'err');
-    return;
-  }
-  if (m === 'edit_and_approve'){
-    closeModal();
-    // Простейшая реализация: открываем форму редактирования, но после сохранения вызовем edit_and_approve
-    // Пока что ведём через обычный flow — открываем форму. Полноценный «edit_and_approve» из UI — позже.
-    openForm(modalObj);
-    toast('Внесите правки и сохраните — они уйдут как правка модератора', '');
-    return;
+    else toast(r.error, 'err'); return;
   }
   if (m === 'revoke'){
     const r = await apiPost({ action: 'revoke', id: modalObj.id });
     if (r.ok){ toast('Отозвано', 'ok'); closeModal(); loadObjects(); }
-    else toast(r.error, 'err');
-    return;
+    else toast(r.error, 'err'); return;
   }
 });
 
-function closeModal(){
-  objModal.classList.remove('open');
-  document.body.style.overflow = '';
-  modalObj = null;
-}
+function closeModal(){ objModal.classList.remove('open'); document.body.style.overflow = ''; modalObj = null; }
 objModal.querySelectorAll('[data-modal-close]').forEach(el => el.addEventListener('click', closeModal));
 
 function renderGallery(){
   const main = $('galleryMain');
   const thumbsBox = $('galleryThumbs');
-  if (!modalPhotos.length){
-    main.innerHTML = '<div class="no-photo">нет фото</div>';
-    thumbsBox.innerHTML = '';
-    return;
-  }
+  if (!modalPhotos.length){ main.innerHTML = '<div class="no-photo">нет фото</div>'; thumbsBox.innerHTML = ''; return; }
   const cur = modalPhotos[modalPhotoIdx];
   main.innerHTML = `
     <img src="${escapeAttr(cur)}" alt="">
@@ -1832,7 +1958,6 @@ async function loadPending(){
     const r = await apiPost({ action: 'pending_list' });
     if (!r.ok) throw new Error(r.error);
     const items = r.objects || [];
-    $('pendingCount').textContent = items.length ? `(${items.length})` : '';
     if (!items.length){
       box.innerHTML = '<div class="empty-list">Очередь пуста — всё одобрено.</div>';
       return;
@@ -1849,9 +1974,9 @@ async function loadPending(){
         <div class="title">${escapeAttr(o.title || '—')}</div>
         <div class="meta">автор: ${escapeAttr(o.owner || '—')}</div>
         <div class="meta">${escapeAttr(o.district || '')} ${o.address ? ', ' + escapeAttr(o.address) : ''}</div>
-        <div class="actions" style="display:flex;gap:6px;padding:12px 16px">
-          <button class="btn-ok" style="flex:1;padding:8px;border-radius:9px;border:1px solid rgba(74,222,128,.3);background:rgba(74,222,128,.1);color:var(--ok);cursor:pointer" data-mact="approve" data-mid="${escapeAttr(o.id)}">Одобрить</button>
-          <button class="btn-del" style="flex:1;padding:8px;border-radius:9px;border:1px solid rgba(224,92,92,.3);background:rgba(224,92,92,.08);color:var(--danger);cursor:pointer" data-mact="reject" data-mid="${escapeAttr(o.id)}">Отклонить</button>
+        <div style="display:flex;gap:6px;padding:12px 16px">
+          <button style="flex:1;padding:9px;border-radius:9px;border:1px solid rgba(74,222,128,.3);background:rgba(74,222,128,.1);color:var(--ok);cursor:pointer;font-weight:600" data-mact="approve" data-mid="${escapeAttr(o.id)}">Одобрить</button>
+          <button style="flex:1;padding:9px;border-radius:9px;border:1px solid rgba(224,92,92,.3);background:rgba(224,92,92,.08);color:var(--danger);cursor:pointer;font-weight:600" data-mact="reject" data-mid="${escapeAttr(o.id)}">Отклонить</button>
         </div>
       </article>`;
     }).join('');
@@ -1898,12 +2023,12 @@ async function loadUsers(){
       </tr></thead><tbody>
       ${users.map(u => `
         <tr>
-          <td class="u-name">${escapeAttr(u.username)}</td>
-          <td>${escapeAttr(u.displayName || '')}</td>
-          <td><span class="u-role ${u.role}">${u.role === 'super_admin' ? 'СУПЕР-АДМИН' : (u.role === 'admin' ? 'АДМИН' : 'ПОЛЬЗОВАТЕЛЬ')}</span></td>
-          <td>${u.status === 'active' ? '✓ Активен' : '✗ Заблокирован'}</td>
-          <td style="font-size:11.5px;color:var(--text-3)">${escapeAttr(u.lastLoginAt ? fmtDate(u.lastLoginAt) : '—')}</td>
-          <td>
+          <td class="u-name" data-label="Логин">${escapeAttr(u.username)}</td>
+          <td data-label="Имя">${escapeAttr(u.displayName || '')}</td>
+          <td data-label="Роль"><span class="u-role ${u.role}">${u.role === 'super_admin' ? 'СУПЕР-АДМИН' : (u.role === 'admin' ? 'АДМИН' : 'ПОЛЬЗОВАТЕЛЬ')}</span></td>
+          <td data-label="Статус">${u.status === 'active' ? '✓ Активен' : '✗ Заблокирован'}</td>
+          <td data-label="Вход" style="font-size:11.5px;color:var(--text-3)">${escapeAttr(u.lastLoginAt ? fmtDate(u.lastLoginAt) : '—')}</td>
+          <td data-label="">
             <div class="u-actions">
               ${u.role === 'super_admin' ? '' : `
                 <button data-uact="edit" data-uname="${escapeAttr(u.username)}">Права</button>
@@ -1925,7 +2050,6 @@ $('usersList').addEventListener('click', async e => {
   if (!btn) return;
   const uname = btn.dataset.uname;
   const act = btn.dataset.uact;
-
   if (act === 'edit'){
     const r = await apiPost({ action: 'users_list' });
     if (!r.ok) return;
@@ -1937,28 +2061,23 @@ $('usersList').addEventListener('click', async e => {
     const p = prompt('Новый пароль (мин. 8):');
     if (!p || p.length < 8) return;
     const r = await apiPost({ action: 'users_reset_pwd', username: uname, password: p });
-    if (r.ok) toast('Пароль обновлён', 'ok');
-    else toast(r.error, 'err');
+    if (r.ok) toast('Пароль обновлён', 'ok'); else toast(r.error, 'err');
     return;
   }
   if (act === 'block'){
     const r = await apiPost({ action: 'users_update', username: uname, status: 'blocked' });
-    if (r.ok){ toast('Заблокирован', 'ok'); loadUsers(); }
-    else toast(r.error, 'err');
+    if (r.ok){ toast('Заблокирован', 'ok'); loadUsers(); } else toast(r.error, 'err');
     return;
   }
   if (act === 'unblock'){
     const r = await apiPost({ action: 'users_update', username: uname, status: 'active' });
-    if (r.ok){ toast('Разблокирован', 'ok'); loadUsers(); }
-    else toast(r.error, 'err');
+    if (r.ok){ toast('Разблокирован', 'ok'); loadUsers(); } else toast(r.error, 'err');
     return;
   }
   if (act === 'delete'){
     if (!confirm('Удалить пользователя ' + uname + '?')) return;
     const r = await apiPost({ action: 'users_delete', username: uname });
-    if (r.ok){ toast('Удалён', 'ok'); loadUsers(); }
-    else toast(r.error, 'err');
-    return;
+    if (r.ok){ toast('Удалён', 'ok'); loadUsers(); } else toast(r.error, 'err');
   }
 });
 
@@ -1975,7 +2094,10 @@ function openUserModal(user){
   $('uRole').value = user ? (user.role === 'admin' ? 'admin' : 'user') : 'user';
   $('uRole').disabled = !!user;
 
-  $('permsWrap').hidden = false;
+  // сбрасываем табы на «Основное»
+  document.querySelectorAll('.um-tab').forEach(b => b.classList.toggle('active', b.dataset.um === 'main'));
+  document.querySelectorAll('.um-pane').forEach(p => p.hidden = p.dataset.um !== 'main');
+
   renderPermsEditor(user ? user.permissions : null);
   userModal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1985,7 +2107,6 @@ function renderPermsEditor(perms){
   perms = perms || {};
   const fields = perms.fields || {};
   const actions = perms.actions || {};
-
   $('fieldsTable').innerHTML = FIELD_LIST.map(f => {
     const lvl = fields[f]?.level || 'hidden';
     const until = fields[f]?.until || '';
@@ -1998,9 +2119,7 @@ function renderPermsEditor(perms){
           <option value="edit" ${lvl==='edit'?'selected':''}>Редактирование</option>
         </select>
       </td>
-      <td>
-        <input type="datetime-local" data-perm-field-until="${f}" value="${until ? until.slice(0,16) : ''}">
-      </td>
+      <td><input type="datetime-local" data-perm-field-until="${f}" value="${until ? until.slice(0,16) : ''}"></td>
     </tr>`;
   }).join('');
 
@@ -2008,10 +2127,7 @@ function renderPermsEditor(perms){
     const val = actions[a];
     let checked = false, until = '';
     if (val === true) checked = true;
-    else if (val && typeof val === 'object'){
-      checked = !!val.value;
-      until = val.until || '';
-    }
+    else if (val && typeof val === 'object'){ checked = !!val.value; until = val.until || ''; }
     return `<div class="perm-action">
       <label><input type="checkbox" data-perm-action="${a}" ${checked?'checked':''}> ${escapeAttr(ACTION_LABELS[a] || a)}</label>
       <div class="until-wrap">
@@ -2034,7 +2150,6 @@ $('saveUserBtn').addEventListener('click', async () => {
     if (password.length < 8) return toast('Пароль минимум 8 символов', 'err');
   }
 
-  // Собираем permissions
   const perms = { fields: {}, actions: {} };
   $('fieldsTable').querySelectorAll('[data-perm-field]').forEach(sel => {
     const f = sel.dataset.permField;
@@ -2048,16 +2163,13 @@ $('saveUserBtn').addEventListener('click', async () => {
     const a = cb.dataset.permAction;
     const checked = cb.checked;
     const until = $('actionsWrap').querySelector(`[data-perm-action-until="${a}"]`)?.value || '';
-    if (!checked) { perms.actions[a] = false; return; }
-    if (until) perms.actions[a] = { value: true, until };
-    else perms.actions[a] = true;
+    if (!checked){ perms.actions[a] = false; return; }
+    if (until) perms.actions[a] = { value: true, until }; else perms.actions[a] = true;
   });
 
   try {
     if (isEdit){
-      const r = await apiPost({
-        action: 'users_set_perms', username, permissions: perms
-      });
+      const r = await apiPost({ action: 'users_set_perms', username, permissions: perms });
       if (!r.ok) throw new Error(r.error);
       if (displayName && displayName !== editingUser.displayName){
         await apiPost({ action: 'users_update', username, displayName });
@@ -2068,11 +2180,7 @@ $('saveUserBtn').addEventListener('click', async () => {
       }
       toast('Сохранено', 'ok');
     } else {
-      const r = await apiPost({
-        action: 'users_create',
-        username, password, displayName, role,
-        permissions: perms
-      });
+      const r = await apiPost({ action: 'users_create', username, password, displayName, role, permissions: perms });
       if (!r.ok) throw new Error(r.error);
       toast('Пользователь создан', 'ok');
     }
@@ -2083,6 +2191,26 @@ $('saveUserBtn').addEventListener('click', async () => {
     toast('Ошибка: ' + err.message, 'err');
   }
 });
+
+/* Табы в модалке пользователя */
+document.querySelectorAll('.um-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.um-tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.um-pane').forEach(p => p.hidden = p.dataset.um !== btn.dataset.um);
+  });
+});
+
+/* Поиск по полям */
+const permSearch = $('permSearch');
+if (permSearch){
+  permSearch.addEventListener('input', () => {
+    const q = permSearch.value.toLowerCase().trim();
+    document.querySelectorAll('#fieldsTable tr').forEach(tr => {
+      const txt = tr.textContent.toLowerCase();
+      tr.style.display = (!q || txt.includes(q)) ? '' : 'none';
+    });
+  });
+}
 
 userModal.querySelectorAll('[data-modal-close]').forEach(el => el.addEventListener('click', () => {
   userModal.classList.remove('open');
@@ -2103,10 +2231,7 @@ async function loadLogs(){
     });
     if (!r.ok) throw new Error(r.error);
     const logs = r.logs || [];
-    if (!logs.length){
-      box.innerHTML = '<div class="empty-list">Логов пока нет</div>';
-      return;
-    }
+    if (!logs.length){ box.innerHTML = '<div class="empty-list">Логов пока нет</div>'; return; }
     box.innerHTML = logs.map(l => {
       const cls = (l.action || '').split('.')[0] === 'auth' ? 'login'
         : (l.action || '').includes('delete') ? 'delete'
@@ -2130,6 +2255,19 @@ async function loadLogs(){
 $('logsRefreshBtn').addEventListener('click', loadLogs);
 $('logsUserFilter').addEventListener('input', () => { clearTimeout(window._lt); window._lt = setTimeout(loadLogs, 400); });
 $('logsActionFilter').addEventListener('change', loadLogs);
+
+/* ============================================================
+   АККОРДЕОН СЕКЦИЙ ФОРМЫ
+   ============================================================ */
+document.querySelectorAll('.form-section[data-collapsible]').forEach((section, i) => {
+  const title = section.querySelector('.form-section-title');
+  if (!title) return;
+  if (i === 0) section.classList.add('open');
+  title.addEventListener('click', () => {
+    if (window.innerWidth > 820) return;
+    section.classList.toggle('open');
+  });
+});
 
 /* ============================================================
    START
